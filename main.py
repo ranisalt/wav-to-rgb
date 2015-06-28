@@ -1,5 +1,6 @@
 import math
 import serial
+import struct
 import threading
 import time
 import wave
@@ -14,7 +15,7 @@ pow, sqrt = math.pow, math.sqrt
 
 
 def get_le(bs):
-    return int.from_bytes(bs, 'little')
+    return struct.unpack('<h', bs)[0]
 
 
 def red(bs):
