@@ -4,6 +4,7 @@ import struct
 import threading
 import time
 import wave
+from numpy import hanning
 from numpy.fft import fft
 
 # CONFIGURATION
@@ -45,12 +46,14 @@ def blue(bs):
 def process(wav, output):
     delay = points / wav.getframerate()
     nframes = wav.getnframes()
+    window = hanning(points)
 
     nextcall = now()
     for i in range(math.ceil(nframes / points)):
         frames = wav.readframes(points)
         values = [get_le(frames[i:i + 2]) for i in range(0, len(frames), 2)]
-        fourier = fft(values, points)
+        values.extend([0 for _ in range(len(values), points)])
+        fourier = fft(values * window)
 
         r, g, b = 0.0, 0.0, 0.0
         for idx, bin in enumerate(fourier[:len(fourier) / 2]):
