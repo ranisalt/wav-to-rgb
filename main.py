@@ -57,11 +57,11 @@ def process(wav, output):
             i = idx + 1
             magnitude = sqrt(pow(bin.real, 2) + pow(bin.imag, 2))
             #print("%f" % (magnitude, ))
-            magnitude /= 1000000000.0
             r += magnitude * red(i)
             g += magnitude * green(i)
             b += magnitude * blue(i)
 
+        r, g, b = map(lambda x: x / 1000000000.0, (r, g, b))
         maxv = max(r, g, b, 1)
         ref = lambda x: str(chr(int(x / maxv * 255))).encode()
 
