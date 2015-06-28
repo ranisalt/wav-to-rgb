@@ -44,6 +44,7 @@ def blue(bs):
 
 
 def process(wav, output):
+    channels = wav.getnchannels()
     delay = points / wav.getframerate()
     nframes = wav.getnframes()
     window = hanning(points)
@@ -51,7 +52,7 @@ def process(wav, output):
     nextcall = now()
     for i in range(math.ceil(nframes / points)):
         frames = wav.readframes(points)
-        values = [get_le(frames[i:i + 2]) for i in range(0, len(frames), 2)]
+        values = [get_le(frames[i:i + 2]) for i in range(0, len(frames), 2 * channels)]
         values.extend([0 for _ in range(len(values), points)])
         fourier = fft(values * window)
 
