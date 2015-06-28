@@ -19,26 +19,26 @@ def get_le(bs):
 
 
 def red(bs):
-    if bs < 30:
+    if bs < 15:
         return 1.0
-    if bs < 100:
-        return 1.0 - (bs - 30.0) / 70.0
+    if bs < 50:
+        return 1.0 - (bs - 15.0) / 35.0
     return 0.0
 
 
 def green(bs):
-    if bs < 30:
-        return bs / 30.0
-    if bs < 400:
+    if bs < 15:
+        return bs / 15.0
+    if bs < 200:
         return 1.0
-    return 1.0 - (bs - 400.0) / 1648.0
+    return 1.0 - (bs - 200.0) / 824.0
 
 
 def blue(bs):
-    if bs < 30:
+    if bs < 15:
         return 0.0
-    if bs < 400:
-        return (bs - 30.0) / 370.0
+    if bs < 200:
+        return (bs - 15.0) / 185.0
     return 1.0
 
 
