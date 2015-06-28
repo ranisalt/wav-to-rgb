@@ -57,21 +57,18 @@ def process(wav, output):
         fourier = fft(values * window)
 
         r, g, b = 0.0, 0.0, 0.0
-        for idx, bin in enumerate(fourier[:len(fourier) / 2]):
+        for idx, fbin in enumerate(fourier[:len(fourier) / 2]):
             i = idx + 1
-            magnitude = sqrt(pow(bin.real, 2) + pow(bin.imag, 2))
-            #print("%f" % (magnitude, ))
+            magnitude = sqrt(pow(fbin.real, 2) + pow(fbin.imag, 2))
             r += magnitude * red(i)
             g += magnitude * green(i)
             b += magnitude * blue(i)
 
-        r, g, b = map(lambda x: x / 1000000000.0, (r, g, b))
+        r, g, b = map(lambda x: x / 5000000.0, (r, g, b))
         maxv = max(r, g, b, 1)
-        ref = lambda x: str(chr(int(x / maxv * 255))).encode()
+        string = bytes(map(lambda x: int(x / maxv * 255), (r, g, b)))
 
-        output.write(ref(r))
-        output.write(ref(g))
-        output.write(ref(b))
+        output.write(string)
 
         #print("%d %d %d" % tuple(map(lambda x: x / maxv * 255, (r, g, b))))
 
