@@ -12,7 +12,7 @@ points = 2048
 
 # DON'T TOUCH
 now, sleep = time.time, time.sleep
-pow, sqrt = math.pow, math.sqrt
+hypot = math.hypot
 
 
 def get_le(bs):
@@ -47,27 +47,27 @@ def process(wav, output):
     channels = wav.getnchannels()
     delay = points / wav.getframerate()
     nframes = wav.getnframes()
+    width = wav.getnchannels() * 2
     window = hanning(points)
 
     nextcall = now()
     for i in range(math.ceil(nframes / points)):
         frames = wav.readframes(points)
-        values = [get_le(frames[i:i + 2]) for i in range(0, len(frames), 2 * channels)]
+        values = [get_le(frames[i:i + 2]) for i in range(0, len(frames), width)]
         values.extend([0 for _ in range(len(values), points)])
         fourier = fft(values * window)
 
         r, g, b = 0.0, 0.0, 0.0
         for idx, fbin in enumerate(fourier[:len(fourier) / 2]):
             i = idx + 1
-            magnitude = sqrt(pow(fbin.real, 2) + pow(fbin.imag, 2))
+            magnitude = hypot(fbin.real, fbin.imag)
             r += magnitude * red(i)
             g += magnitude * green(i)
             b += magnitude * blue(i)
 
-        r, g, b = map(lambda x: x / 5000000.0, (r, g, b))
-        maxv = max(r, g, b, 1)
-        string = bytes(map(lambda x: int(x / maxv * 255), (r, g, b)))
-
+        r, g, b = (x / float(1 << 22) for x in (r, g, b))
+        max_value = max(r, g, b, 1)
+        string = bytes(int(x / max_value * 255) for x in (r, g, b))
         output.write(string)
 
         #print("%d %d %d" % tuple(map(lambda x: x / maxv * 255, (r, g, b))))
