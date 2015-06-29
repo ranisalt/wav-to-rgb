@@ -15,31 +15,31 @@ now, sleep = time.time, time.sleep
 hypot = math.hypot
 
 
-def get_le(bs):
-    return struct.unpack('<h', bs)[0]
+def get_le(short):
+    return struct.unpack('<h', short)[0]
 
 
-def red(bs):
-    if bs < 15:
+def red(short):
+    if short < 15:
         return 1.0
-    if bs < 50:
-        return 1.0 - (bs - 15.0) / 35.0
+    if short < 50:
+        return 1.0 - (short - 15.0) / 35.0
     return 0.0
 
 
-def green(bs):
-    if bs < 15:
-        return bs / 15.0
-    if bs < 200:
+def green(short):
+    if short < 15:
+        return short / 15.0
+    if short < 200:
         return 1.0
-    return 1.0 - (bs - 200.0) / 824.0
+    return 1.0 - (short - 200.0) / 824.0
 
 
-def blue(bs):
-    if bs < 15:
+def blue(short):
+    if short < 15:
         return 0.0
-    if bs < 200:
-        return (bs - 15.0) / 185.0
+    if short < 200:
+        return (short - 15.0) / 185.0
     return 1.0
 
 
