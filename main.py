@@ -44,7 +44,6 @@ def blue(short):
 
 
 def process(wav, output):
-    channels = wav.getnchannels()
     delay = points / wav.getframerate()
     nframes = wav.getnframes()
     width = wav.getnchannels() * 2
@@ -70,12 +69,8 @@ def process(wav, output):
         string = bytes(int(x / max_value * 255) for x in (r, g, b))
         output.write(string)
 
-        #print("%d %d %d" % tuple(map(lambda x: x / maxv * 255, (r, g, b))))
-
         nextcall = nextcall + delay
-        #sleepdelay = nextcall - now()
         sleep(nextcall - now())
-        #sleep(sleepdelay)
 
 
 def main():
