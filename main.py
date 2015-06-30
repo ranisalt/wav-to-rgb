@@ -77,8 +77,6 @@ def process(wav, output):
 
         r, g, b = 0.0, 0.0, 0.0
         for idx, fbin in enumerate(fourier[:len(fourier) / 2]):
-            i = idx + 1
-
             # magnitude = sqrt of (real part squared + imaginary part squared)
             magnitude = hypot(fbin.real, fbin.imag)
             r += magnitude * red(idx)
