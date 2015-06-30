@@ -13,6 +13,7 @@ points = 2048
 # DON'T TOUCH
 now, sleep = time.time, time.sleep
 hypot = math.hypot
+stop = False
 
 
 def get_le(short):
@@ -44,6 +45,7 @@ def blue(short):
 
 
 def process(wav, output):
+    global stop
     delay = points / wav.getframerate()
     nframes = wav.getnframes()
     width = wav.getnchannels() * 2
@@ -51,6 +53,10 @@ def process(wav, output):
 
     nextcall = now()
     for i in range(math.ceil(nframes / points)):
+        if stop:
+            output.write(b'\0\0\0')
+            return
+
         frames = wav.readframes(points)
         values = [get_le(frames[i:i + 2]) for i in range(0, len(frames), width)]
         values.extend([0 for _ in range(len(values), points)])
@@ -74,8 +80,7 @@ def process(wav, output):
 
 
 def main():
-    """def file_wb(filename):
-        return open(filename, 'wb')"""
+    global stop
 
     def serial_port(filename):
         return serial.Serial(filename, baudrate=9600)
@@ -90,13 +95,18 @@ def main():
     parser.add_argument('-o', '--output', type=serial_port, required=True)
 
     args = parser.parse_args()
+
     timer = threading.Thread(target=process, kwargs={
         'wav': args.input,
         'output': args.output,
     })
-
     timer.start()
-    timer.join()
+
+    try:
+        while timer.is_alive():
+            timer.join(1)
+    except KeyboardInterrupt:
+        stop = True
 
 
 if __name__ == "__main__":
