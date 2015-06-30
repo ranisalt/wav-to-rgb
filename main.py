@@ -72,6 +72,7 @@ def process(wav, output):
 
         # fill with zeroes if not enough data (e.g. last slice)
         values.extend([0 for _ in range(len(values), points)])
+
         fourier = fft(values * window)
 
         r, g, b = 0.0, 0.0, 0.0
@@ -86,6 +87,7 @@ def process(wav, output):
 
         # divide all values by theoretical maximum relevant value
         r, g, b = (x / float(1 << 22) for x in (r, g, b))
+
         max_value = max(r, g, b, 1)
 
         # value is a number in range [0, 1]
