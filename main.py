@@ -95,8 +95,17 @@ def process(wav, output):
         string = tuple(int(math.pow(x / max_value, 4) * 255) for x in (r, g, b))
         output.write(bytes(string))
 
-        nextcall = nextcall + delay
-        sleep(nextcall - now())
+        nextcall += delay
+        sleepdelay = nextcall - now()
+
+        # skip entire slice if timeout is expired
+        while sleepdelay < 0:
+            wav.readframes(points)
+            section += 1
+            nextcall += delay
+            sleepdelay = nextcall - now()
+
+        sleep(sleepdelay)
 
 
 def main():
