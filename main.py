@@ -66,8 +66,8 @@ def process(wav, output):
 
         r, g, b = (x / float(1 << 22) for x in (r, g, b))
         max_value = max(r, g, b, 1)
-        string = bytes(int(x / max_value * 255) for x in (r, g, b))
-        output.write(string)
+        string = tuple(int(math.pow(x / max_value, 4) * 255) for x in (r, g, b))
+        output.write(bytes(string))
 
         nextcall = nextcall + delay
         sleep(nextcall - now())
