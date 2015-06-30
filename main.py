@@ -46,9 +46,17 @@ def blue(short):
 
 def process(wav, output):
     global stop
+
+    # time between sample slices
     delay = points / wav.getframerate()
+
+    # total number of samples
     nframes = wav.getnframes()
+
+    # width of sample, in bytes
     width = wav.getnchannels() * 2
+
+    # pre-calculate hanning window for color smoothness
     window = hanning(points)
 
     nextcall = now()
@@ -58,20 +66,30 @@ def process(wav, output):
             return
 
         frames = wav.readframes(points)
+
+        # read little-endian sample. uses only 1 channel.
         values = [get_le(frames[i:i + 2]) for i in range(0, len(frames), width)]
+
+        # fill with zeroes if not enough data (e.g. last slice)
         values.extend([0 for _ in range(len(values), points)])
         fourier = fft(values * window)
 
         r, g, b = 0.0, 0.0, 0.0
         for idx, fbin in enumerate(fourier[:len(fourier) / 2]):
             i = idx + 1
+
+            # magnitude = sqrt of (real part squared + imaginary part squared)
             magnitude = hypot(fbin.real, fbin.imag)
             r += magnitude * red(i)
             g += magnitude * green(i)
             b += magnitude * blue(i)
 
+        # divide all values by theoretical maximum relevant value
         r, g, b = (x / float(1 << 22) for x in (r, g, b))
         max_value = max(r, g, b, 1)
+
+        # value is a number in range [0, 1]
+        # powering by 4 simulates logarithmic potentiometer values
         string = tuple(int(math.pow(x / max_value, 4) * 255) for x in (r, g, b))
         output.write(bytes(string))
 
