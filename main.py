@@ -60,7 +60,7 @@ def process(wav, output):
     window = hanning(points)
 
     nextcall = now()
-    for i in range(math.ceil(nframes / points)):
+    for section in range(math.ceil(nframes / points)):
         if stop:
             output.write(b'\0\0\0')
             return
@@ -80,9 +80,9 @@ def process(wav, output):
 
             # magnitude = sqrt of (real part squared + imaginary part squared)
             magnitude = hypot(fbin.real, fbin.imag)
-            r += magnitude * red(i)
-            g += magnitude * green(i)
-            b += magnitude * blue(i)
+            r += magnitude * red(idx)
+            g += magnitude * green(idx)
+            b += magnitude * blue(idx)
 
         # divide all values by theoretical maximum relevant value
         r, g, b = (x / float(1 << 22) for x in (r, g, b))
